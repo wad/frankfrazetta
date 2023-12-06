@@ -1,0 +1,54 @@
+Development notes, 2023-12-06
+
+Goals:
+  - Make a modern website to exercise full-stack technology
+  - Dockerized so that it doesn't require annoying maintenance when Linux OS package versions are updated
+  - Not locked into any particular cloud solution, so I can self-host everything if I want to
+  - Can deploy the app, empty of any images, and then use the app itself to load in the content
+
+Scope:
+  - First version
+    - No user accounts
+  - Later version
+    - User accounts
+    - Website accepts user uploads, comments, tags
+
+Front end:
+  - angular
+    - used to package and bundle the application into optimized minified Javascript files
+    - The files are added to the NGINX docker image
+  - Single page, something simple like folder tabs across the top, with content underneath
+    - tab: Artist Info
+    - tab: Gallery Tours
+    - tab: Image Info
+  - works okay on mobile, maybe not optimized overly much for it though
+
+Back end:
+  - NGINX
+    - in docker
+    - terminates SSL
+    - includes front-end application files, statically served
+    - serves all static content, except for actual images
+  - Java
+    - Spring Boot
+    - OpenAPI (also generates SDK for front end)
+  - MYSQL
+    - dockerized
+    - liquibase
+
+Misc:
+  - need an SSL cert
+  - run this on a dedicated Linux server in AWS
+
+Image files:
+  - each filename is a zero-padded six-digit number (iid == image Id), plus ".jpg" or whatever extension.
+  - the files are stored directly on the filesystem of the linux server
+    - another option is to store them in S3, or some other bucket
+    - just keeping them on the filesystem for now, to avoid cloud dependency
+
+Database:
+  - table: "images"
+    - primary key "id" (corresponds to name of file)
+  - table: "tags"
+    - primary key: "tag"
+
